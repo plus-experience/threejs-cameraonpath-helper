@@ -2,6 +2,8 @@
 
 Helper tool to draw catmull spline curve for use with first person persepctive camera in three.js.
 
+**Demo URL**:
+http://plus-ex.com/_dev/faris/three/camera-editor/v3/
 
 ## Setup
 
