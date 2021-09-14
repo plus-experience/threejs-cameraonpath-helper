@@ -5,6 +5,9 @@ Helper tool to draw catmull spline curve for use with first person persepctive c
 **Demo URL**:
 http://plus-ex.com/_dev/faris/three/camera-editor/v3/
 
+![wheeling](https://github.com/plus-experience/threejs-cameraonpath-helper/blob/master/wheeling.gif)
+
+
 ## Setup
 
 - When initialising threejs scene, add instance :
@@ -92,7 +95,7 @@ When in debug mode, you can move, add , remove points to the lines.
 2.  Click on `addPoint` in helper menu
 3. Click on `updateCamPath` in helper menu
 
-![add-point-select](https://github.com/plus-experience/threejs-cameraonpath-helper/blob/master/add-point-between.gif)
+![add-point-select](https://github.com/plus-experience/threejs-cameraonpath-helper/blob/master/add-point_end.gif)
 
 ### Remove point at the end of line
 
