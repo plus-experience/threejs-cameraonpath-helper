@@ -166,6 +166,15 @@ class firstPerson {
             // create orbit controls if not created yet
             setupOrbitControls();
         }
+        if (this.cameraMode == 'firstpersonview') {
+            this.orbitControls.enableRotate = false;
+            this.orbitControls.enableZoom = false;
+            this.orbitControls.enablePan = false;
+        } else {
+            this.orbitControls.enableRotate = true;
+            this.orbitControls.enableZoom = true;
+            this.orbitControls.enablePan = true;
+        }
     }
     setupOrbitControls() {
         // console.log('create orbit');
