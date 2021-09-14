@@ -8,9 +8,11 @@ http://plus-ex.com/_dev/faris/three/camera-editor/v3/
 ## Setup
 
 When initialising threejs scene, add instance :
+
 `firstPersonInstance = new  firstPerson();`
 
 If camera already created, pass your camera as parameter into class:
+
 `firstPersonInstance = new  firstPerson(camera);`
 
 **Spline points positions**
