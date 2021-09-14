@@ -7,26 +7,56 @@ http://plus-ex.com/_dev/faris/three/camera-editor/v3/
 
 ## Setup
 
-When initialising threejs scene, add instance :
+- When initialising threejs scene, add instance :
 
-`firstPersonInstance = new  firstPerson();`
+```
+// init threejs 
+init() {
+...
 
-If camera already created, pass your camera as parameter into class:
+  firstPersonInstance = new  firstPerson();
+  
+...
+}
+```
+- If camera already created, pass your camera as parameter into class:
 
-`firstPersonInstance = new  firstPerson(camera);`
+	- `firstPersonInstance = new  firstPerson(camera);`
+
+
+- Add spline update function to threejs render loop
+
+```
+function  render() {
+	...
+	
+	// add this
+	firstPersonInstance.updateSplineRender();
+
+	// Use firstperson instance camera
+	renderer.render(scene, firstPersonInstance.nowCamera);
+
+	requestAnimationFrame(render);
+
+}
+
+```
+
+
 
 **Spline points positions**
 ``` 
 this.curvePosition = [...];
 ```
 
+- Set spline points here
 - Minimum 4 spline points is  necessary
 
 **Spline camera rotation angles**
 ``` 
 this.curveRotation = [...];
 ```
-
+- Set rotation points here
 
 ## Debug Mode
 
@@ -62,7 +92,7 @@ When in debug mode, you can move, add , remove points to the lines.
 2.  Click on `addPoint` in helper menu
 3. Click on `updateCamPath` in helper menu
 
-![add-point-select](https://github.com/plus-experience/threejs-cameraonpath-helper/blob/master/add-point_end.gif)
+![add-point-select](https://github.com/plus-experience/threejs-cameraonpath-helper/blob/master/add-point_selected.gif)
 
 ### Remove point at the end of line
 
