@@ -226,10 +226,11 @@ class firstPerson {
         var active_point_index = this.positions.indexOf(this.active_point.position);
 
         if (active_point_index >= 0) {
-            console.log(active_point_index);
+            console.log('add between', active_point_index);
 
             this.positions.insert(active_point_index, this.addSplineObject().position);
         } else {
+            console.log('add last');
             this.positions.push(this.addSplineObject().position);
         }
 
