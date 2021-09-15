@@ -12,6 +12,8 @@ class firstPerson {
 
         // SET TO TRUE FOR HELPER
         this.debug = true;
+        this.showHelpers = this.debug;
+        this.allHelpers = [];
 
         this.setupFirstPersonObject();
         this.setupCamera(mainCamera);
@@ -45,6 +47,7 @@ class firstPerson {
                 removePoint: this.removePoint.bind(this),
                 exportSpline: this.exportSpline.bind(this),
                 updateCamPath: this.updateCamPath.bind(this),
+                toggleHelpers: this.toggleHelpers.bind(this),
                 firstPersonView: this.useFirstPersonView.bind(this),
                 orbitView: this.useOrbitView.bind(this),
             };
@@ -57,6 +60,7 @@ class firstPerson {
             splineFolder.add(params, 'removePoint');
             splineFolder.add(params, 'exportSpline');
             splineFolder.add(params, 'updateCamPath');
+            splineFolder.add(params, 'toggleHelpers');
             splineFolder.open();
 
             var cameraFolder = this.gui.addFolder('Camera');
@@ -432,10 +436,30 @@ class firstPerson {
         this.firstPersonCamera.quaternion.copy(cameraQuaternion);
     }
 
+    toggleHelpers() {
+        this.showHelpers = !this.showHelpers;
+
+        // console.log(this.showHelpers, this.allHelpers);
+
+        for (let i = 0; i < this.allHelpers.length; i++) {
+            this.allHelpers[i].visible = this.showHelpers;
+        }
+        for (let i = 0; i < this.splineHelperObjects.length; i++) {
+            this.splineHelperObjects[i].visible = this.showHelpers;
+        }
+        this.transformControl.visible = this.showHelpers;
+        this.originObject.visible = this.showHelpers;
+        this.spline.mesh.visible = this.showHelpers;
+        this.curveObject.visible = this.showHelpers;
+    }
+
     onKeyUp(event) {
         var event = event || window.event;
         var keycode = event.keyCode;
         switch (keycode) {
+            case 48: // 0 : helper
+                this.toggleHelpers();
+                break;
             case 49: // 1 : camera
                 this.changeCamera('firstpersonview');
                 break;
