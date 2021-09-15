@@ -45,16 +45,24 @@ class firstPerson {
                 removePoint: this.removePoint.bind(this),
                 exportSpline: this.exportSpline.bind(this),
                 updateCamPath: this.updateCamPath.bind(this),
+                firstPersonView: this.useFirstPersonView.bind(this),
+                orbitView: this.useOrbitView.bind(this),
             };
 
             // GUI Spline editor
             this.gui = new dat.GUI();
 
-            this.gui.add(params, 'addPoint');
-            this.gui.add(params, 'removePoint');
-            this.gui.add(params, 'exportSpline');
-            this.gui.add(params, 'updateCamPath');
-            this.gui.open();
+            var splineFolder = this.gui.addFolder('Edit Spline');
+            splineFolder.add(params, 'addPoint');
+            splineFolder.add(params, 'removePoint');
+            splineFolder.add(params, 'exportSpline');
+            splineFolder.add(params, 'updateCamPath');
+            splineFolder.open();
+
+            var cameraFolder = this.gui.addFolder('Camera');
+            cameraFolder.add(params, 'firstPersonView');
+            cameraFolder.add(params, 'orbitView');
+            cameraFolder.open();
 
             // Raycaster
             this.raycaster = new THREE.Raycaster();
@@ -122,6 +130,14 @@ class firstPerson {
         }
 
         // prettier-ignore
+        this.curvePosition = 
+        [new THREE.Vector3(8.651371224181645, 10.063362043540664, 10.440772510488214),
+            new THREE.Vector3(49.562586983521754, 27.084819391670372, -88.05592337161097),
+            new THREE.Vector3(-25.13906615057779, 36.816385951081436, -161.23000915241622),
+            new THREE.Vector3(73.8410533018339, 10.250759824071327, -201.12704519449736),
+            new THREE.Vector3(14.885786364440278, 18.466288909757136, -278.36870301016063)]
+
+        // prettier-ignore
         this.curveRotation = new THREE.CatmullRomCurve3([
             new THREE.Vector3(this.toRad(0), this.toRad(0), this.toRad(0)), 
             new THREE.Vector3(this.toRad(0), this.toRad(0), this.toRad(0)), 
@@ -129,15 +145,6 @@ class firstPerson {
             new THREE.Vector3(this.toRad(0), this.toRad(0), this.toRad(0)),
             new THREE.Vector3(this.toRad(0), this.toRad(0), this.toRad(0))
         ]);
-
-        // prettier-ignore
-        this.curvePosition = [
-            new THREE.Vector3(8.651371224181645, 10.063362043540664, 10.440772510488214),
-            new THREE.Vector3(11.470183032558054, 10.79725448516099, -81.07221813018634),
-            new THREE.Vector3(-25.13906615057779, 36.816385951081436, -161.23000915241622),
-            new THREE.Vector3(73.8410533018339, 10.250759824071327, -201.12704519449736),
-            new THREE.Vector3(14.885786364440278, 18.466288909757136, -278.36870301016063)
-        ];
 
         // resize();
 
@@ -160,21 +167,29 @@ class firstPerson {
     }
 
     changeCamera(modetouse) {
-        this.cameraMode = modetouse;
-        console.log('change camera');
-        if (this.cameraMode == 'orbitview' && !this.orbitControls) {
+        if (modetouse == 'firstpersonview') {
+            this.useFirstPersonView();
+        }
+        if (modetouse == 'orbitview') {
+            this.useOrbitView();
+        }
+    }
+    useFirstPersonView() {
+        this.cameraMode = 'firstpersonview';
+        this.orbitControls.enableRotate = false;
+        this.orbitControls.enableZoom = false;
+        this.orbitControls.enablePan = false;
+    }
+    useOrbitView() {
+        this.cameraMode = 'orbitview';
+        if (!this.orbitControls) {
             // create orbit controls if not created yet
             setupOrbitControls();
         }
-        if (this.cameraMode == 'firstpersonview') {
-            this.orbitControls.enableRotate = false;
-            this.orbitControls.enableZoom = false;
-            this.orbitControls.enablePan = false;
-        } else {
-            this.orbitControls.enableRotate = true;
-            this.orbitControls.enableZoom = true;
-            this.orbitControls.enablePan = true;
-        }
+
+        this.orbitControls.enableRotate = true;
+        this.orbitControls.enableZoom = true;
+        this.orbitControls.enablePan = true;
     }
     setupOrbitControls() {
         // console.log('create orbit');
@@ -203,20 +218,39 @@ class firstPerson {
         const spline_drag_material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff });
         const object = new THREE.Mesh(this.spline_drag_geometry, spline_drag_material);
 
+        // check position of selected object
+        var active_point_index = this.positions.indexOf(this.active_point.position);
+        var has_active_point = active_point_index >= 0;
+
         if (position) {
             object.position.copy(position);
         } else {
             // adding new points
             // console.log('adding new pt');
-            object.position.x = Math.random() * 100 - 50;
-            object.position.y = Math.random() * 50;
-            object.position.z = Math.random() * 100 - 50;
+            // if point is selected, add nearby selected point
+            // else, add at random position
+            object.position.x = !has_active_point ? Math.random() * 100 - 50 : this.active_point.position.x + 5;
+            object.position.y = !has_active_point ? Math.random() * 50 : this.active_point.position.y + 5;
+            object.position.z = !has_active_point ? Math.random() * 100 - 50 : this.active_point.position.z + 5;
         }
 
         if (this.debug) {
             scene.add(object);
         }
-        this.splineHelperObjects.push(object);
+
+        if (active_point_index >= 0) {
+            console.log('add splineobj between', active_point_index);
+
+            this.splineHelperObjects.insert(active_point_index, object);
+            // this.splineHelperObjects.push(object);
+        } else {
+            console.log('add splineobj last');
+            // this.positions.push(this.addSplineObject().position);
+            this.splineHelperObjects.push(object);
+        }
+
+        // console.log('addsplineobject', this.splineHelperObjects);
+
         return object;
     }
 
@@ -252,6 +286,7 @@ class firstPerson {
             var _point = this.active_point;
 
             this.positions.splice(active_point_index, 1);
+            this.splineHelperObjects.splice(active_point_index, 1);
             console.log('remove via select');
         } else {
             // if no point is selected, remove last point in array
