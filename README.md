@@ -67,8 +67,10 @@ To enable helper, enable debug state inside class constructor:
 `this.debug = true`
 
 **Keyboard Shortcuts**
+- Key '0' - Show / Hide helper guides
 - Key '1' - First person camera 
 - Key '2' - Orbit controls camera
+
 
 ## Customising Methods
 
